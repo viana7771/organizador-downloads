@@ -27,10 +27,12 @@ arquivos = [
     'backup.zip',
     'programa.exe',
     'codigo.py',
-    'pagina.html'
+    'pagina.html',
+    'arquivo_sem_extensao',
+    'arquivo.xyz'
 ]
 
-pasta_extencoes = {
+pasta_extensoes = {
     '.html': 'HTML',
     '.py': 'PY',
     '.exe': 'EXE',
@@ -44,7 +46,8 @@ pasta_extencoes = {
     '.xlsx': 'XLSX',
     '.docx': 'DOCX',
     '.pdf': 'PDF',
-    '.txt': 'TXT'
+    '.txt': 'TXT',
+    '': 'Gerais',
 }
 
 for arquivo in arquivos:
@@ -59,9 +62,9 @@ for arquivo in arquivos:
 
 for arquivo in destino.iterdir():
     if arquivo.is_file():
-        extencao = arquivo.suffix
-        if extencao in pasta_extencoes:
-            nome_pasta = pasta_extencoes[extencao]
+        extensao = arquivo.suffix
+        if extensao in pasta_extensoes:
+            nome_pasta = pasta_extensoes[extensao]
             pasta_destino = destino / nome_pasta
             pasta_destino.mkdir(
                 parents=True,
@@ -73,5 +76,14 @@ for arquivo in destino.iterdir():
             )
             print(f'O arquivo --> {arquivo.name} <--\nFoi movido para pasta --> {pasta_destino.name} <-- com sucesso!\n')
 
-    else:
-        print(f'Não há arquivos para serem movidos!')
+        else:
+            pasta_outros = destino / 'Outros'
+            pasta_outros.mkdir(
+                parents=True,
+                exist_ok=True
+            )
+            shutil.move(
+                arquivo,
+                pasta_outros
+            )
+            print(f'O arquivo --> {arquivo.name} <--\nFoi movido para pasta --> {pasta_outros.name} <-- com sucesso!\n') 
