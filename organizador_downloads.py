@@ -29,7 +29,9 @@ arquivos = [
     'codigo.py',
     'pagina.html',
     'arquivo_sem_extensao',
-    'arquivo.xyz'
+    'arquivo.xyz',
+    'aulas_python.pdf',
+    'tarbalho_universitario.docx'
 ]
 
 pasta_extensoes = {
@@ -51,14 +53,14 @@ pasta_extensoes = {
 }
 
 for arquivo in arquivos:
-    caminho_arquivo = origem / arquivo
-    caminho_arquivo.touch()
-
-for arquivo in arquivos:
     origem_arquivo = origem / arquivo
+    origem_arquivo.touch()
     destino_arquivo = destino / arquivo
 
-    shutil.move(origem_arquivo, destino_arquivo)
+    shutil.move(
+        origem_arquivo,
+        destino_arquivo
+    )
 
 for arquivo in destino.iterdir():
     if arquivo.is_file():
@@ -70,11 +72,22 @@ for arquivo in destino.iterdir():
                 parents=True,
                 exist_ok=True
             )
-            shutil.move(
-                arquivo,
-                pasta_destino
-            )
-            print(f'O arquivo --> {arquivo.name} <--\nFoi movido para pasta --> {pasta_destino.name} <-- com sucesso!\n')
+
+            arquivo_destino = pasta_destino / arquivo.name
+
+            if arquivo_destino.exists():
+                arquivo.unlink()
+                print(
+                    f'Arquivo -->{arquivo.name}<-- já existe em -->{pasta_destino}\nArquivo será excluido!\n '
+                )
+            else:
+                shutil.move(
+                    arquivo,
+                    pasta_destino
+                )  
+                print(
+                    f'O arquivo --> {arquivo.name} <--\nFoi movido para pasta --> {pasta_destino.name} <-- com sucesso!\n'
+                )
 
         else:
             pasta_outros = destino / 'Outros'
@@ -82,8 +95,20 @@ for arquivo in destino.iterdir():
                 parents=True,
                 exist_ok=True
             )
-            shutil.move(
-                arquivo,
-                pasta_outros
-            )
-            print(f'O arquivo --> {arquivo.name} <--\nFoi movido para pasta --> {pasta_outros.name} <-- com sucesso!\n') 
+
+            destino_outros = pasta_outros / arquivo.name
+
+            if destino_outros.exists():
+                arquivo.unlink()
+                print(
+                    f'Arquivo -->{arquivo.name}<-- já existe em -->{pasta_destino}\nArquivo será excluido!\n '
+                )
+
+            else:
+                shutil.move(
+                    arquivo,
+                    pasta_outros
+                )
+                print(
+                    f'O arquivo --> {arquivo.name} <--\nFoi movido para pasta --> {pasta_outros.name} <-- com sucesso!\n'
+                ) 
