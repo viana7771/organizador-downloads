@@ -7,7 +7,9 @@ authors = [
     { name = "Kaire Viana", email = "kaireviana20@gmail.com" }
 ]
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "rich>=15.0.0",
+]
 
 [project.scripts]
 organizador-download = "organizador_download:main"

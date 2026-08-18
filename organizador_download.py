@@ -1,5 +1,5 @@
 from pathlib import Path
-import shutil
+import shutil 
 
 origem = Path('arquivo')
 destino = Path('Download')
@@ -48,8 +48,7 @@ pasta_extensoes = {
     '.xlsx': 'XLSX',
     '.docx': 'DOCX',
     '.pdf': 'PDF',
-    '.txt': 'TXT',
-    '': 'Gerais',
+    '.txt': 'TXT'
 }
 
 for arquivo in arquivos:
@@ -62,9 +61,15 @@ for arquivo in arquivos:
         destino_arquivo
     )
 
+arquivos_processados = 0
+arquivo_movido = 0
+arquivo_movido_outros = 0
+arquivos_excluidos = 0
+
 for arquivo in destino.iterdir():
     if arquivo.is_file():
         extensao = arquivo.suffix
+        arquivos_processados += 1
         if extensao in pasta_extensoes:
             nome_pasta = pasta_extensoes[extensao]
             pasta_destino = destino / nome_pasta
@@ -77,17 +82,13 @@ for arquivo in destino.iterdir():
 
             if arquivo_destino.exists():
                 arquivo.unlink()
-                print(
-                    f'Arquivo -->{arquivo.name}<-- já existe em -->{pasta_destino}\nArquivo será excluido!\n '
-                )
+                arquivos_excluidos += 1
             else:
                 shutil.move(
                     arquivo,
                     pasta_destino
-                )  
-                print(
-                    f'O arquivo --> {arquivo.name} <--\nFoi movido para pasta --> {pasta_destino.name} <-- com sucesso!\n'
                 )
+                arquivo_movido += 1
 
         else:
             pasta_outros = destino / 'Outros'
@@ -100,15 +101,19 @@ for arquivo in destino.iterdir():
 
             if destino_outros.exists():
                 arquivo.unlink()
-                print(
-                    f'Arquivo -->{arquivo.name}<-- já existe em -->{pasta_destino}\nArquivo será excluido!\n '
-                )
+                arquivos_excluidos += 1
 
             else:
                 shutil.move(
                     arquivo,
                     pasta_outros
                 )
-                print(
-                    f'O arquivo --> {arquivo.name} <--\nFoi movido para pasta --> {pasta_outros.name} <-- com sucesso!\n'
-                ) 
+                arquivo_movido_outros += 1
+
+print(
+'Relatório da Organização\n'
+f'Arquivos processados: {arquivos_processados}\n'
+f'Arquivos movidos para as pastas: {arquivo_movido}\n'
+f'Arquivos movidos para pastas "OUTROS": {arquivo_movido_outros}\n'
+f'Arquivos excluidos: {arquivos_excluidos}'
+)
