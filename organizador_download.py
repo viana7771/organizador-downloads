@@ -1,5 +1,9 @@
 from pathlib import Path
-import shutil 
+import shutil
+from rich import print
+from rich.console import Console
+from rich.panel import Panel
+from rich.table import Table
 
 origem = Path('arquivo')
 destino = Path('Download')
@@ -111,9 +115,40 @@ for arquivo in destino.iterdir():
                 arquivo_movido_outros += 1
 
 print(
-'Relatório da Organização\n'
-f'Arquivos processados: {arquivos_processados}\n'
-f'Arquivos movidos para as pastas: {arquivo_movido}\n'
-f'Arquivos movidos para pastas "OUTROS": {arquivo_movido_outros}\n'
-f'Arquivos excluidos: {arquivos_excluidos}'
+    Panel.fit(
+        '[yellow]Organizador de Arquivos, mais expecificamente arquivos de \ndownload, para automatizar tarefas repetitivas [/]',
+        title='[bold yellow]AUTOMAÇÃO PYTHON[/] :file_folder:',
+        subtitle='[yellow]Facilitando o seu dia a dia[/] ',
+        border_style='bold blue'
+    )
 )
+
+table = Table(
+    title='Relatorio Operacional:'
+)
+
+table.add_column(
+    'Tarefas'
+)
+table.add_column(
+    'Quantidade'
+)
+
+table.add_row(
+    '[yellow]Arquivos Processados:[/]', f'[bold green]{arquivos_processados}[/]'
+)
+
+table.add_row(
+    '[yellow]Arquivos Movidos:[/]', f'[bold green]{arquivo_movido}[/]'
+)
+
+table.add_row(
+    '[yellow]Arquivos em Outros:[/]', f'[bold green]{arquivo_movido_outros}[/]'
+)
+
+table.add_row(
+    '[yellow]Arquivos Excluidos:[/]', f'[bold red]{arquivos_excluidos}[/]'
+)
+
+console = Console()
+console.print(table)
