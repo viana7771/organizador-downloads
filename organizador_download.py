@@ -59,7 +59,7 @@ pasta_extensoes = {
 }
 
 listagem_error ={
-    'FileNotFoundError': 'O arquivo ou pasta não foi encrontrado',
+    'FileNotFoundError': 'O arquivo ou pasta não foi encontrado',
     'FileExistsError': 'Algo que Você tentou criar já existe',
     'PermissionError': 'Não tem permissão para realizar a operação',
     'IsADirectoryError': 'Você tratou uma pasta como se fosse um arquivo',
@@ -70,17 +70,21 @@ arquivos_processados = 0
 arquivo_movido = 0
 arquivo_movido_outros = 0
 arquivos_excluidos = 0
-arquivos_error = 0
+arquivos_com_error = 0
 
 for arquivo in arquivos:
     origem_arquivo = origem / arquivo
     origem_arquivo.touch()
     destino_arquivo = destino / arquivo
 
-    shutil.move(
-        origem_arquivo,
-        destino_arquivo
-    )
+    try:
+        shutil.move(
+            origem_arquivo,
+            destino_arquivo
+        )
+    except FileNotFoundError:
+        arquivos_com_error += 1
+        print(listagem_error['FileNotFoundError'])
 
 for arquivo in destino.iterdir():
     if arquivo.is_file():
@@ -100,11 +104,15 @@ for arquivo in destino.iterdir():
                 arquivo.unlink()
                 arquivos_excluidos += 1
             else:
-                shutil.move(
-                    arquivo,
-                    pasta_destino
-                )
-                arquivo_movido += 1
+                try:
+                    shutil.move(
+                        arquivo,
+                        pasta_destino
+                    )
+                    arquivo_movido += 1
+                except FileNotFoundError:
+                    arquivos_com_error += 1
+                    print(listagem_error['FileNotFoundError']) 
 
         else:
             pasta_outros = destino / 'Outros'
