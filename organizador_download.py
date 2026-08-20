@@ -4,6 +4,10 @@ from rich import print
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
+from rich.progress import Progress
+from time import sleep
+
+console = Console()
 
 origem = Path('arquivo')
 destino = Path('Download')
@@ -18,7 +22,6 @@ destino.mkdir(
 )
 
 arquivos = [
-    'documento.txt',
     'relatorio.docx',
     'contrato.pdf',
     'tabela.xlsx',
@@ -55,6 +58,20 @@ pasta_extensoes = {
     '.txt': 'TXT'
 }
 
+listagem_error ={
+    'FileNotFoundError': 'O arquivo ou pasta não foi encrontrado',
+    'FileExistsError': 'Algo que Você tentou criar já existe',
+    'PermissionError': 'Não tem permissão para realizar a operação',
+    'IsADirectoryError': 'Você tratou uma pasta como se fosse um arquivo',
+    'NotADirectoryError': 'Você tratou um arquivo como se fosse uma pasta'
+}
+
+arquivos_processados = 0
+arquivo_movido = 0
+arquivo_movido_outros = 0
+arquivos_excluidos = 0
+arquivos_error = 0
+
 for arquivo in arquivos:
     origem_arquivo = origem / arquivo
     origem_arquivo.touch()
@@ -64,11 +81,6 @@ for arquivo in arquivos:
         origem_arquivo,
         destino_arquivo
     )
-
-arquivos_processados = 0
-arquivo_movido = 0
-arquivo_movido_outros = 0
-arquivos_excluidos = 0
 
 for arquivo in destino.iterdir():
     if arquivo.is_file():
@@ -116,39 +128,65 @@ for arquivo in destino.iterdir():
 
 print(
     Panel.fit(
-        '[yellow]Organizador de Arquivos, mais expecificamente arquivos de \ndownload, para automatizar tarefas repetitivas [/]',
-        title='[bold yellow]AUTOMAÇÃO PYTHON[/] :file_folder:',
-        subtitle='[yellow]Facilitando o seu dia a dia[/] ',
-        border_style='bold blue'
+        "[bold cyan]Bem-vindo ao Organizador de Arquivos![/bold cyan]\n\n"
+        "[white]Automatizando a organização dos seus arquivos "
+        "de forma simples, rápida e eficiente.[/white]",
+        title=":file_folder: [bold yellow]Organizador de Arquivos[/bold yellow]",
+        border_style="cyan",
+        padding=(1, 4)
     )
 )
 
+with Progress() as progress:
+    tarefa = progress.add_task(
+        "[yellow]Iniciando processo...",
+        total=100
+    )
+
+    while not progress.finished:
+        progress.update(tarefa, advance=10)
+        sleep(0.1)
+
 table = Table(
-    title='Relatorio Operacional:'
+    title="Relatório Operacional",
+    title_style="bold cyan"
 )
 
 table.add_column(
-    'Tarefas'
+    "Tarefas",
+    style="yellow"
 )
+
 table.add_column(
-    'Quantidade'
+    "Quantidade",
+    justify="center"
 )
 
 table.add_row(
-    '[yellow]Arquivos Processados:[/]', f'[bold green]{arquivos_processados}[/]'
+    "Arquivos Processados:",
+    f"[bold green]{arquivos_processados}[/]"
 )
 
 table.add_row(
-    '[yellow]Arquivos Movidos:[/]', f'[bold green]{arquivo_movido}[/]'
+    "Arquivos Movidos:",
+    f"[bold green]{arquivo_movido}[/]"
 )
 
 table.add_row(
-    '[yellow]Arquivos em Outros:[/]', f'[bold green]{arquivo_movido_outros}[/]'
+    "Arquivos em Outros:",
+    f"[bold yellow]{arquivo_movido_outros}[/]"
 )
 
 table.add_row(
-    '[yellow]Arquivos Excluidos:[/]', f'[bold red]{arquivos_excluidos}[/]'
+    "Arquivos Excluídos:",
+    f"[bold red]{arquivos_excluidos}[/]"
 )
 
-console = Console()
-console.print(table)
+print(
+    Panel.fit(
+        table,
+        title="[bold cyan]Resultado da Operação[/bold cyan]",
+        border_style="cyan",
+        padding=(1, 2)
+    )
+)
